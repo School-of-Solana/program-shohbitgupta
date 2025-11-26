@@ -1,0 +1,1355 @@
+{
+  "address": "HTk3g5v5CUai7MXF3r87jAMDjpGH6oXFJQCRYf4GFrv9",
+  "metadata": {
+    "name": "escrow",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "accept_offer",
+      "docs": [
+        "Accepts an offer (fully or partially)",
+        "",
+        "# Arguments",
+        "* `request_amount` - The amount of request tokens to provide (can be partial)"
+      ],
+      "discriminator": [
+        227,
+        82,
+        234,
+        131,
+        1,
+        18,
+        48,
+        2
+      ],
+      "accounts": [
+        {
+          "name": "offer",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  102,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "offer.creator",
+                "account": "Offer"
+              },
+              {
+                "kind": "account",
+                "path": "offer.offer_id",
+                "account": "Offer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "acceptor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "creator",
+          "writable": true
+        },
+        {
+          "name": "offer_mint_token",
+          "docs": [
+            "The minted currency(ex: USDC) offered"
+          ]
+        },
+        {
+          "name": "request_mint_token",
+          "docs": [
+            "The minted currency(ex: SOL) requested"
+          ]
+        },
+        {
+          "name": "vault",
+          "docs": [
+            "The vault holding the escrowed offer tokens"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "offer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "acceptor_offer_account",
+          "docs": [
+            "Acceptor's token account for the offer mint (receives offer tokens)"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "acceptor"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "offer_mint_token"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "acceptor_request_account",
+          "docs": [
+            "Acceptor's token account for the request mint (sends request tokens)"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "acceptor"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "request_mint_token"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "creator_request_account",
+          "docs": [
+            "Creator's token account for the request mint (receives request tokens)"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "offer.creator",
+                "account": "Offer"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "request_mint_token"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "request_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "cancel_offer",
+      "docs": [
+        "Cancels an offer and refunds tokens to the creator",
+        "Only the creator can cancel their own offer"
+      ],
+      "discriminator": [
+        92,
+        203,
+        223,
+        40,
+        92,
+        89,
+        53,
+        119
+      ],
+      "accounts": [
+        {
+          "name": "offer",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  102,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "offer.creator",
+                "account": "Offer"
+              },
+              {
+                "kind": "account",
+                "path": "offer.offer_id",
+                "account": "Offer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "creator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "offer_mint_currency_token"
+        },
+        {
+          "name": "creator_token_account",
+          "docs": [
+            "Creator's token account to receive the refund"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "creator"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "offer_mint_currency_token"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "vault",
+          "docs": [
+            "The vault holding the escrowed tokens"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "offer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "close_expired_offer",
+      "docs": [
+        "Closes an expired offer and refunds tokens to the creator",
+        "Anyone can call this to clean up expired offers"
+      ],
+      "discriminator": [
+        174,
+        202,
+        24,
+        79,
+        174,
+        99,
+        110,
+        236
+      ],
+      "accounts": [
+        {
+          "name": "offer",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  102,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "offer.creator",
+                "account": "Offer"
+              },
+              {
+                "kind": "account",
+                "path": "offer.offer_id",
+                "account": "Offer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "closer",
+          "docs": [
+            "The person closing the offer (receives the rent refund)"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "creator",
+          "writable": true
+        },
+        {
+          "name": "offer_mint_currency_token",
+          "docs": [
+            "The minted currency(ex: USDC) offered"
+          ]
+        },
+        {
+          "name": "creator_token_account",
+          "docs": [
+            "Creator's token account to receive the refund"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "creator"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "offer_mint_currency_token"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "vault",
+          "docs": [
+            "The vault holding the escrowed tokens"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "offer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "create_offer",
+      "docs": [
+        "Creates a new token swap offer",
+        "",
+        "# Arguments",
+        "* `offer_amount` - The amount of tokens to offer",
+        "* `request_amount` - The amount of tokens requested in exchange",
+        "* `deadline` - Unix timestamp when the offer expires",
+        "* `offer_id` - Unique identifier for this offer"
+      ],
+      "discriminator": [
+        237,
+        233,
+        192,
+        168,
+        248,
+        7,
+        249,
+        241
+      ],
+      "accounts": [
+        {
+          "name": "creator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "offer",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  111,
+                  102,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "creator"
+              },
+              {
+                "kind": "arg",
+                "path": "offer_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "offer_token_account"
+        },
+        {
+          "name": "request_token_account"
+        },
+        {
+          "name": "creator_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "creator"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "offer_token_account"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "offer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "offer_amount",
+          "type": "u64"
+        },
+        {
+          "name": "request_amount",
+          "type": "u64"
+        },
+        {
+          "name": "deadline",
+          "type": "i64"
+        },
+        {
+          "name": "offer_id",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Offer",
+      "discriminator": [
+        215,
+        88,
+        60,
+        71,
+        170,
+        162,
+        73,
+        229
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "OfferAccepted",
+      "discriminator": [
+        81,
+        238,
+        238,
+        115,
+        140,
+        18,
+        8,
+        20
+      ]
+    },
+    {
+      "name": "OfferCancelled",
+      "discriminator": [
+        45,
+        42,
+        175,
+        214,
+        51,
+        192,
+        154,
+        9
+      ]
+    },
+    {
+      "name": "OfferClosed",
+      "discriminator": [
+        237,
+        38,
+        102,
+        204,
+        165,
+        180,
+        177,
+        164
+      ]
+    },
+    {
+      "name": "OfferCreated",
+      "discriminator": [
+        31,
+        236,
+        215,
+        144,
+        75,
+        45,
+        157,
+        87
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "OfferExpired",
+      "msg": "The offer has expired"
+    },
+    {
+      "code": 6001,
+      "name": "OfferNotExpired",
+      "msg": "The offer has not expired yet"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidAmount",
+      "msg": "Invalid amount specified"
+    },
+    {
+      "code": 6003,
+      "name": "InsufficientOfferAmount",
+      "msg": "Insufficient offer amount remaining"
+    },
+    {
+      "code": 6004,
+      "name": "MathOverflow",
+      "msg": "Math overflow occurred"
+    },
+    {
+      "code": 6005,
+      "name": "Unauthorized",
+      "msg": "Only the offer creator can perform this action"
+    },
+    {
+      "code": 6006,
+      "name": "InvalidDeadline",
+      "msg": "The deadline must be in the future"
+    }
+  ],
+  "types": [
+    {
+      "name": "Offer",
+      "docs": [
+        "The Offer account stores all information about a token swap offer"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "creator",
+            "docs": [
+              "The creator of the offer"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "offer_mint",
+            "docs": [
+              "The mint token offered account"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "request_mint",
+            "docs": [
+              "The mint token requested account"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "offer_amount",
+            "docs": [
+              "The amount of tokens being offered"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "request_amount",
+            "docs": [
+              "The amount of tokens being requested"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "remaining_offer_amount",
+            "docs": [
+              "The remaining amount of tokens still available in the offer"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "remaining_request_amount",
+            "docs": [
+              "The remaining amount of tokens still needed"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "deadline",
+            "docs": [
+              "The deadline timestamp (Unix timestamp in seconds)"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "vault",
+            "docs": [
+              "The vault token account that holds the escrowed tokens"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "Bump seed for PDA derivation"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "offer_id",
+            "docs": [
+              "Unique identifier for this offer"
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "OfferAccepted",
+      "docs": [
+        "Event emitted when an offer is accepted (fully or partially)"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "offer",
+            "docs": [
+              "The public key of the offer account"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "acceptor",
+            "docs": [
+              "The acceptor of the offer"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "offer_tokens_transferred",
+            "docs": [
+              "The amount of offer tokens transferred"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "request_tokens_received",
+            "docs": [
+              "The amount of request tokens received"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "remaining_offer_amount",
+            "docs": [
+              "The remaining offer amount after this acceptance"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "remaining_request_amount",
+            "docs": [
+              "The remaining request amount after this acceptance"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "is_full_acceptance",
+            "docs": [
+              "Whether this was a full acceptance"
+            ],
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "OfferCancelled",
+      "docs": [
+        "Event emitted when an offer is cancelled by the creator"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "offer",
+            "docs": [
+              "The public key of the offer account"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "creator",
+            "docs": [
+              "The creator who cancelled the offer"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "refunded_amount",
+            "docs": [
+              "The amount of tokens refunded"
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "OfferClosed",
+      "docs": [
+        "Event emitted when an expired offer is closed"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "offer",
+            "docs": [
+              "The public key of the offer account"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "creator",
+            "docs": [
+              "The creator who received the refund"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "refunded_amount",
+            "docs": [
+              "The amount of tokens refunded"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "closer",
+            "docs": [
+              "The person who closed the offer"
+            ],
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "OfferCreated",
+      "docs": [
+        "Event emitted when a new offer is created"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "offer",
+            "docs": [
+              "The public key of the offer account"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "creator",
+            "docs": [
+              "The creator of the offer"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "offer_mint",
+            "docs": [
+              "The mint of the token being offered"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "request_mint",
+            "docs": [
+              "The mint of the token being requested"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "offer_amount",
+            "docs": [
+              "The amount of tokens being offered"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "request_amount",
+            "docs": [
+              "The amount of tokens being requested"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "deadline",
+            "docs": [
+              "The deadline timestamp"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "offer_id",
+            "docs": [
+              "Unique offer ID"
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    }
+  ]
+}
