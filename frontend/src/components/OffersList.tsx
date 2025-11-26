@@ -7,14 +7,8 @@ import {
   createAssociatedTokenAccountInstruction,
 } from "@solana/spl-token";
 import { getProgram, getOfferPda, getVaultPda } from "../utils/anchor";
-import {
-  RPC_ENDPOINT,
-  TOKEN_PROGRAM_ID,
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  SYSTEM_PROGRAM_ID,
-} from "../utils/constants";
+import { RPC_ENDPOINT, TOKEN_PROGRAM_ID } from "../utils/constants";
 import { parseError } from "../utils/errorHandler";
-import { formatAmount } from "../utils/tokenUtils";
 
 interface Offer {
   publicKey: string;
