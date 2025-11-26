@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { PublicKey } from "@solana/web3.js";
+import { Connection, PublicKey } from "@solana/web3.js";
 import { BN } from "@coral-xyz/anchor";
-import { getAssociatedTokenAddress } from "@solana/spl-token";
+import {
+  getAssociatedTokenAddress,
+  createAssociatedTokenAccountInstruction,
+} from "@solana/spl-token";
 import { getProgram, getOfferPda, getVaultPda } from "../utils/anchor";
-import { TOKEN_PROGRAM_ID } from "../utils/constants";
+import { TOKEN_PROGRAM_ID, RPC_ENDPOINT } from "../utils/constants";
+import { parseError } from "../utils/errorHandler";
 
 export const AcceptOffer: React.FC = () => {
   const wallet = useWallet();
@@ -48,61 +52,125 @@ export const AcceptOffer: React.FC = () => {
 
   const handleAcceptOffer = async () => {
     if (!wallet.publicKey || !wallet.signTransaction) {
-      setStatus("Please connect your wallet");
+      setStatus("❌ Please connect your wallet");
       return;
     }
 
     if (!offerDetails) {
-      setStatus("Please fetch offer details first");
+      setStatus("❌ Please fetch offer details first");
+      return;
+    }
+
+    if (!requestAmount || parseFloat(requestAmount) <= 0) {
+      setStatus("❌ Please enter a valid amount");
       return;
     }
 
     try {
       setLoading(true);
-      setStatus("Accepting offer...");
+      setStatus("⏳ Accepting offer...");
 
+      const connection = new Connection(RPC_ENDPOINT, "confirmed");
       const program = getProgram(wallet);
       const creator = new PublicKey(creatorAddress);
       const offerIdNum = parseInt(offerId);
       const offerPda = getOfferPda(creator, offerIdNum);
       const vaultPda = getVaultPda(offerPda);
 
+      // Get token decimals
+      const requestMintInfo = await connection.getAccountInfo(
+        offerDetails.requestMint
+      );
+      if (!requestMintInfo) {
+        throw new Error("Failed to fetch request mint info");
+      }
+
+      // Parse decimals (at offset 44 in mint account data)
+      const requestDecimals = requestMintInfo.data[44];
+
+      // Convert decimal amount to raw amount
+      const requestAmountRaw = new BN(
+        Math.floor(parseFloat(requestAmount) * Math.pow(10, requestDecimals))
+      );
+
+      setStatus("⏳ Preparing token accounts...");
+
       // Get token accounts
-      const acceptorOfferAccount = await getAssociatedTokenAddress(
+      const acceptorOfferAta = await getAssociatedTokenAddress(
         offerDetails.offerMint,
         wallet.publicKey
       );
-      const acceptorRequestAccount = await getAssociatedTokenAddress(
+      const acceptorRequestAta = await getAssociatedTokenAddress(
         offerDetails.requestMint,
         wallet.publicKey
       );
-      const creatorRequestAccount = await getAssociatedTokenAddress(
+      const creatorRequestAta = await getAssociatedTokenAddress(
         offerDetails.requestMint,
         creator
       );
 
-      const tx = await program.methods
-        .acceptOffer(new BN(requestAmount))
-        .accounts({
-          offer: offerPda,
-          acceptor: wallet.publicKey,
-          creator: creator,
-          offerMintToken: offerDetails.offerMint,
-          requestMintToken: offerDetails.requestMint,
-          vault: vaultPda,
-          acceptorOfferAccount: acceptorOfferAccount,
-          acceptorRequestAccount: acceptorRequestAccount,
-          creatorRequestAccount: creatorRequestAccount,
-          tokenProgram: TOKEN_PROGRAM_ID,
-        })
-        .rpc();
+      // Check if accounts exist and create if needed
+      const preInstructions = [];
+      const acceptorOfferAccount = await connection.getAccountInfo(
+        acceptorOfferAta
+      );
+      if (!acceptorOfferAccount) {
+        preInstructions.push(
+          createAssociatedTokenAccountInstruction(
+            wallet.publicKey,
+            acceptorOfferAta,
+            wallet.publicKey,
+            offerDetails.offerMint
+          )
+        );
+      }
 
-      setStatus(`✅ Offer accepted! Transaction: ${tx}`);
+      const acceptorRequestAccount = await connection.getAccountInfo(
+        acceptorRequestAta
+      );
+      if (!acceptorRequestAccount) {
+        preInstructions.push(
+          createAssociatedTokenAccountInstruction(
+            wallet.publicKey,
+            acceptorRequestAta,
+            wallet.publicKey,
+            offerDetails.requestMint
+          )
+        );
+      }
+
+      setStatus("⏳ Building transaction...");
+
+      const txBuilder = program.methods.acceptOffer(requestAmountRaw).accounts({
+        offer: offerPda,
+        acceptor: wallet.publicKey,
+        creator: creator,
+        offerMintToken: offerDetails.offerMint,
+        requestMintToken: offerDetails.requestMint,
+        vault: vaultPda,
+        acceptorOfferAccount: acceptorOfferAta,
+        acceptorRequestAccount: acceptorRequestAta,
+        creatorRequestAccount: creatorRequestAta,
+        tokenProgram: TOKEN_PROGRAM_ID,
+      });
+
+      if (preInstructions.length > 0) {
+        txBuilder.preInstructions(preInstructions);
+      }
+
+      setStatus("⏳ Sending transaction...");
+      const tx = await txBuilder.rpc();
+
+      setStatus(
+        `✅ Offer accepted successfully! TX: ${tx.substring(0, 20)}...`
+      );
+      setRequestAmount("");
+
       // Refresh offer details
-      await fetchOfferDetails();
+      setTimeout(() => fetchOfferDetails(), 2000);
     } catch (error: any) {
       console.error("Error accepting offer:", error);
-      setStatus(`❌ Error: ${error.message}`);
+      setStatus(parseError(error));
     } finally {
       setLoading(false);
     }
@@ -156,14 +224,17 @@ export const AcceptOffer: React.FC = () => {
           </p>
 
           <div className="form-group">
-            <label>Request Amount to Accept:</label>
+            <label>Request Amount to Accept (decimals allowed):</label>
             <input
               type="number"
-              placeholder="Amount to accept"
+              step="any"
+              placeholder="e.g., 50 or 0.5"
               value={requestAmount}
               onChange={(e) => setRequestAmount(e.target.value)}
-              max={offerDetails.remainingRequestAmount.toString()}
             />
+            <small style={{ color: "#666", fontSize: "12px" }}>
+              Max raw amount: {offerDetails.remainingRequestAmount.toString()}
+            </small>
           </div>
           <button onClick={handleAcceptOffer} disabled={loading}>
             {loading ? "Accepting..." : "Accept Offer"}

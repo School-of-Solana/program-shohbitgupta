@@ -235,6 +235,7 @@ export const CreateOffer: React.FC = () => {
     try {
       setLoading(true);
       setStatus("Creating offer...");
+      console.log("Creating offer...");
 
       const connection = new Connection(RPC_ENDPOINT, "confirmed");
       const program = getProgram(wallet);
@@ -329,9 +330,9 @@ export const CreateOffer: React.FC = () => {
         .accounts({
           creator: wallet.publicKey,
 
-          // 🟢 CORRECT TOKEN ACCOUNTS
-          offerTokenAccount: creatorOfferAta,
-          requestTokenAccount: creatorRequestAta,
+          // 🟢 CORRECT: Pass MINT addresses, not ATAs
+          offerTokenAccount: offerMintPubkey,
+          requestTokenAccount: requestMintPubkey,
           creatorTokenAccount: creatorOfferAta,
 
           // PDAs
