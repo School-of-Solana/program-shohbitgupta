@@ -1,6 +1,6 @@
 # Project Description
 
-**Deployed Frontend URL:** https://solana-escrow-dapp-3t0k0jayd-shohbitguptas-projects.vercel.app/
+**Deployed Frontend URL:** https://token-swap-offer-escrow-o0bgtlfl3-shohbitguptas-projects.vercel.app/
 
 **Solana Program ID:** HTk3g5v5CUai7MXF3r87jAMDjpGH6oXFJQCRYf4GFrv9
 
