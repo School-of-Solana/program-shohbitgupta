@@ -229,7 +229,24 @@ export const OffersList: React.FC = () => {
       setTimeout(() => fetchOffers(), 2000);
     } catch (error: any) {
       console.error("Error accepting offer:", error);
-      setStatus(parseError(error));
+
+      // Check for specific error types
+      if (error.transactionLogs) {
+        const logs = error.transactionLogs.join("\n");
+
+        if (logs.includes("insufficient funds")) {
+          setStatus(
+            `❌ Insufficient funds! You need ${formatTokenAmount(
+              offer.remainingRequestAmount,
+              tokenDecimals[offer.publicKey]?.request
+            )} tokens in your wallet to accept this offer.`
+          );
+        } else {
+          setStatus(parseError(error));
+        }
+      } else {
+        setStatus(parseError(error));
+      }
     } finally {
       setAcceptingOfferId(null);
     }
@@ -402,11 +419,13 @@ export const OffersList: React.FC = () => {
                     <div
                       style={{
                         fontSize: "10px",
-                        color: "#666",
-                        marginTop: "4px",
+                        color: "#888",
+                        marginTop: "6px",
+                        fontStyle: "italic",
                       }}
                     >
-                      Max: {offer.remainingRequestAmount} (raw amount)
+                      💡 You need request tokens in your wallet to accept this
+                      offer
                     </div>
                   </div>
                 )}
